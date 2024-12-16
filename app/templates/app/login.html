@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Page</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, rgb(85, 170, 255), rgb(153, 102, 255));
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="file"],
+        textarea {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <h4>{{ succ }}</h4>
+        <form id="signupForm" action="{% url 'login' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <label for="msg">{{ msg }}</label>
+            
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+            <div class="error" id="error"></div>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+
+    <script>
+        // JavaScript for basic form validation
+        document.getElementById('signupForm').addEventListener('submit', function(event) {
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+
+            // Clear previous error
+            errorDiv.textContent = '';
+
+            // Validate password length
+            if (password.length < 6) {
+                errorDiv.textContent = 'Password must be at least 6 characters long.';
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+    </script>
+</body>
+</html>

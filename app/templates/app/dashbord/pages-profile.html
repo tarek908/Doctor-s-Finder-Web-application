@@ -1,0 +1,265 @@
+{% extends "app/dashbord/base2.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+	body {
+		font-family: Arial, sans-serif;
+		background-color: #171616;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: auto;
+		margin: 0;
+	}
+
+	.container {
+		background-color: #ffffff;
+		padding: 20px;
+		border-radius: 8px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		max-width: 500px;
+		width: 100%;
+	}
+
+	.form-container {
+		display: none;
+	}
+
+	h2 {
+		text-align: center;
+		color: #333;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 5px;
+		font-weight: bold;
+		color: #555;
+	}
+
+	input[type="text"],
+	input[type="file"],
+	input[type="url"] {
+		width: 100%;
+		padding: 8px;
+		margin-bottom: 15px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		box-sizing: border-box;
+	}
+
+	.btn {
+		display: inline-block;
+		background-color: #007bff;
+		color: #fff;
+		padding: 10px 20px;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		text-align: center;
+		text-decoration: none;
+		transition: background-color 0.3s;
+	}
+
+	.btn:hover {
+		background-color: #0056b3;
+	}
+
+	.btn-submit {
+		background-color: #28a745;
+		width: 100%;
+		margin-top: 10px;
+	}
+
+	.btn-submit:hover {
+		background-color: #218838;
+	}
+	table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+</style>
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<div class="mb-3">
+						<h1 class="h3 d-inline align-middle">Profile</h1>
+					</div>
+					<div class="row">
+						<div class="col-md-4 col-xl-3">
+							<div class="card mb-3">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Profile Details</h5>
+								</div>
+								<div class="card-body text-center">
+									{% if dr.profile %}
+									<img src="{{ MEDIA_URL }}{{ dr.profile.url }}" alt="Mason" class="img-fluid rounded-circle mb-2" width="128" height="128" />
+									{% else %}
+									<img src="{% static '/dashbord/img/avatars/avatar-3.jpg' %}" alt=" Mason" class="img-fluid rounded-circle mb-2" width="128" height="128" />
+									{% endif %}
+									<h5 class="card-title mb-0">{{ dr.name }}</h5>
+									<div class="text-muted mb-2">{{ dr.title }}</div>
+									<div class="text-muted mb-2">{{ request.session.email }}</div>
+
+									<div>
+										<form style="padding: 10px;" action="{% url 'updateProfile' pk=request.session.id %}" method="post" enctype="multipart/form-data">
+											{% csrf_token %}
+											<label style="cursor: pointer;"
+											for="profile">Profile</label>
+											
+											<input style="display: none;" type="file" id="profile" name="profile">
+											<button class="btn btn-primary btn-sm">Profile</button>
+										</form>
+										<button class="btn" onclick="toggleForm()">Update</button>
+									</div>
+								</div>
+								<hr class="my-0" />
+								<div class="card-body">
+									<h5 class="h6 card-title">Degree</h5>
+									<h3>{{ dr.degree }}</h3>
+								</div>
+								<hr class="my-0" />
+								<div class="card-body">
+									<h5 class="h6 card-title">About</h5>
+									<ul class="list-unstyled mb-0">
+										<li class="mb-1"><span data-feather="home" class="feather-sm me-1"></span> Lives in <a href="#">{{ dr.livesIn }}</a></li>
+
+										<li class="mb-1"><span data-feather="briefcase" class="feather-sm me-1"></span> Works at <a href="#">{{ dr.workAt }}</a></li>
+										<li class="mb-1"><span data-feather="map-pin" class="feather-sm me-1"></span> From <a href="#">{{ dr.froms }}</a></li>
+									</ul>
+								</div>
+								<hr class="my-0" />
+								<div class="card-body">
+									<h5 class="h6 card-title">Elsewhere</h5>
+									<ul class="list-unstyled mb-0">
+										<li class="mb-1"><a href="{{ dr.x }}">Twitter</a></li>
+										<li class="mb-1"><a href="{{ dr.facebook }}">Facebook</a></li>
+										<li class="mb-1"><a href="{{ dr.linkedin }}">LinkedIn</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-8 col-xl-9">
+							<div class="card">
+								<div class="container">
+									
+								
+									<div class="form-container" id="form-container">
+										<h2>Doctor Information Form</h2>
+										<form action="{% url 'UpdateInfo' pk=request.session.id %}" method="post" enctype="multipart/form-data">
+											{% csrf_token %}
+											
+											<label for="name">Name:</label>
+											<input value="{{ dr.name }}" type="text" id="name" name="name" placeholder="name.">
+
+											<label for="title">Deperment:</label>
+											<input value="{{ dr.title }}" type="text" id="title" name="title" placeholder="Dr.">
+								
+											<label for="degree">Degree:</label>
+											<input value="{{ dr.degree }}" type="text" id="degree" name="degree" placeholder="MBBS, MD">
+								
+											<label for="livesIn">Lives In:</label>
+											<input value="{{ dr.livesIn }}" type="text" id="livesIn" name="livesIn" placeholder="City, Country">
+								
+											<label for="WorkAt">Work At:</label>
+											<input value="{{ dr.workAt }}" type="text" id="WorkAt" name="workAt" placeholder="Hospital Name">
+								
+											<label for="form">From:</label>
+											<input value="{{ dr.froms }}" type="text" id="from" name="froms" placeholder="Specialization">
+								
+											<label for="contact">Contact:</label>
+											<input value="{{ dr.contact }}" type="text" id="contact" name="contact" placeholder="Phone Number">
+								
+											<label for="facebook">Facebook Profile:</label>
+											<input value="{{ dr.facebook }}" type="url" id="facebook" name="facebook" placeholder="https://facebook.com/">
+								
+											<label for="x">X Profile:</label>
+											<input value="{{ dr.x }}" type="url" id="x" name="x" placeholder="https://x.com/">
+								
+											<label for="linkedin">LinkedIn Profile:</label>
+											<input value="{{ dr.linkedin }}" type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/">
+								
+											<button type="submit" class="btn btn-submit">Submit</button>
+										</form>
+									</div>
+								</div>
+							</div>
+							
+							<div class="table">
+								<table>
+									{% if patt %}
+									<thead>
+										<tr>
+											<th>First Name</th>
+											<th>Last Name</th>
+											<th>Email</th>
+											<th>Contact</th>
+											<th>Doctor</th>
+											<th>Chosen Date</th>
+											<th>Description</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody>
+									{% for i in patt %}
+										<tr>
+											<td>{{ i.fname }}</td>
+											<td>{{ i.lname }}</td>
+											<td>{{ i.email }}</td>
+											<td>{{ i.contact }}</td>
+											<td>{{ i.doctor }}</td>
+											<td>{{ i.chose_date }}</td>
+											<td>{{ i.descrption }}</td>
+											<td>
+												<a  href="{% url 'status' pk=i.id %}">{{ i.status }}</a>
+											</td>
+										</tr>
+									{% endfor %}
+									{% else %}	
+										<tr>
+											<td colspan="8">No appointments found.</td>
+										</tr>
+									{% endif %}
+									</tbody>
+									
+								</table>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</main>
+
+			<script>
+				function toggleForm() {
+					const formContainer = document.getElementById('form-container');
+					if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+						formContainer.style.display = 'block';
+					} else {
+						formContainer.style.display = 'none';
+					}
+				}
+			</script>
+{% endblock %}
+
+			

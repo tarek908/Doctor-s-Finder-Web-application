@@ -1,0 +1,295 @@
+{% extends "app/admin/base3.html" %}
+{% load static %}
+{% block content %}
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3"><strong>Analytics</strong> Dashboard</h1>
+
+					<div class="row">
+						<div class="col-xl-6 col-xxl-5 d-flex">
+							<div class="w-100">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="card">
+											<div class="card-body">
+												<div class="row">
+													<div class="col mt-0">
+														<h5 class="card-title">Doctor</h5>
+													</div>
+
+													<div class="col-auto">
+														<div class="stat text-primary">
+															<i class="align-middle" data-feather="{{truck}}"></i>
+														</div>
+													</div>
+												</div>
+												<h1 class="mt-1 mb-3">{{ doctor }}</h1>
+												
+											</div>
+										</div>
+										<div class="card">
+											<div class="card-body">
+												<div class="row">
+													<div class="col mt-0">
+														<h5 class="card-title">Visitors</h5>
+													</div>
+
+													<div class="col-auto">
+														<div class="stat text-primary">
+															<i class="align-middle" data-feather="users"></i>
+														</div>
+													</div>
+												</div>
+												<h1 class="mt-1 mb-3">{{ visit }}</h1>
+												
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="card">
+											<div class="card-body">
+												<div class="row">
+													<div class="col mt-0">
+														<h5 class="card-title">Patient</h5>
+													</div>
+
+													<div class="col-auto">
+														<div class="stat text-primary">
+															<i class="align-middle" data-feather="dollar-sign"></i>
+														</div>
+													</div>
+												</div>
+												<h1 class="mt-1 mb-3">{{ patinet }}</h1>
+								
+											</div>
+										</div>
+										<div class="card">
+											<div class="card-body">
+												<div class="row">
+													<div class="col mt-0">
+														<h5 class="card-title">Appointments</h5>
+													</div>
+
+													<div class="col-auto">
+														<div class="stat text-primary">
+															<i class="align-middle" data-feather="shopping-cart"></i>
+														</div>
+													</div>
+												</div>
+												<h1 class="mt-1 mb-3">{{ appoint }}</h1>
+												
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-6 col-xxl-7">
+							<div class="card flex-fill w-100">
+								<div class="card-header">
+
+									<h5 class="card-title mb-0">Recent Movement</h5>
+								</div>
+								<div class="card-body py-3">
+									<div class="chart chart-sm">
+										<canvas id="chartjs-dashboard-line"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-12 col-lg-12 col-xxl-9 d-flex">
+							<div class="card flex-fill">
+								<div class="card-header">
+
+									<h5 class="card-title mb-0">All Doctors</h5>
+								</div>
+								<table class="table table-hover my-0">
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Name</th>
+											<th class="d-none d-xl-table-cell">Email</th>
+											<th class="d-none d-xl-table-cell">Start Date</th>
+											<th class="d-none d-md-table-cell">Updated</th>
+											<th>Verification</th>
+											<th>Delte</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% if doctors %}
+										{% for i in doctors %}
+										<tr>
+											<td>{{ i.id }}</td>
+											<td>{{ i.name }}</td>
+											<td class="d-none d-xl-table-cell">{{ i.email }}</td>
+											<td class="d-none d-xl-table-cell">{{ i.is_created }}</td>
+											<td class="d-none d-md-table-cell">{{ i.is_updated }}</td>
+											<td>
+												{% if i.is_verified %}
+												<a href="{% url 'drVerification' pk=i.id %}">
+													<span class="badge bg-success">Verified</span>
+												</a>
+												{% else %}
+												<a href="{% url 'drVerification' pk=i.id %}">
+													<span class="badge bg-danger">Pending</span>
+												</a>
+												{% endif %}
+											</td>
+											<td><a href="{% url 'drDelete' pk=i.id %}">
+												<span class="badge bg-danger">Delete</span>
+											</a></td>
+										</tr>
+										{% endfor %}
+										{% endif %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<!-- all patient  -->
+					<div class="row">
+						<div class="col-12 col-lg-12 col-xxl-9 d-flex">
+							<div class="card flex-fill">
+								<div class="card-header">
+
+									<h5 class="card-title mb-0">All Patient</h5>
+								</div>
+								<table class="table table-hover my-0">
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Name</th>
+											<th class="d-none d-xl-table-cell">Email</th>
+											<th class="d-none d-xl-table-cell">Start Date</th>
+											<th class="d-none d-md-table-cell">Contact</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% if patinets %}
+										{% for i in patinets %}
+										<tr>
+											<td>{{ i.id }}</td>
+											<td>{{ i.name }}</td>
+											<td class="d-none d-xl-table-cell">{{ i.email }}</td>
+											<td class="d-none d-xl-table-cell">{{ i.is_created }}</td>
+											<td class="d-none d-md-table-cell">{{ i.contact }}</td>
+											<td>
+												{% if i.is_verified %}
+												<span class="badge bg-success">Verified</span>
+												{% else %}
+												<span class="badge bg-danger">Pending</span>
+												{% endif %}
+											</td>
+										</tr>
+										{% endfor %}
+										{% endif %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+						
+					</div>
+					<!-- all appointments  -->
+					<div class="row">
+						<div class="col-12 col-lg-12 col-xxl-9 d-flex">
+							<div class="card flex-fill">
+								<div class="card-header">
+
+									<h5 class="card-title mb-0">All Appontiment</h5>
+								</div>
+								<table class="table table-hover my-0">
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th class="d-none d-xl-table-cell">Email</th>
+											<th class="d-none d-xl-table-cell"> Date</th>
+											<th class="d-none d-md-table-cell">Doctor</th>
+											<th class="d-none d-xl-table-cell"> Visit</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% if appoints %}
+										{% for i in appoints %}
+										<tr>
+											<td>{{ i.fname }} {{ i.lname }}</td>
+											<td class="d-none d-xl-table-cell">{{ i.email }}</td>
+											<td class="d-none d-xl-table-cell">{{ i.chose_date }}</td>
+											<td class="d-none d-md-table-cell">{{ i.doctor }}</td>
+											<td>
+												{% if i.visit %}
+												<span class="badge bg-success">{{ i.visit }}</span>
+												{% else %}
+												<span class="badge bg-danger">Pending</span>
+												{% endif %}
+											</td>
+											<td>
+												{% if i.status %}
+												<span class="badge bg-success">Accepted</span>
+												{% else %}
+												<span class="badge bg-danger">Pending</span>
+												{% endif %}
+											</td>
+										</tr>
+										{% endfor %}
+										{% endif %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+						
+					</div>
+					<!-- all Rating  -->
+					<div class="row">
+						<div class="col-12 col-lg-12 col-xxl-9 d-flex">
+							<div class="card flex-fill">
+								<div class="card-header">
+
+									<h5 class="card-title mb-0">All Rating's</h5>
+								</div>
+								<table class="table table-hover my-0">
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th class="d-none d-xl-table-cell">Title</th>
+											<th class="d-none d-md-table-cell">Description</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% if rating %}
+										{% for i in rating %}
+										<tr>
+											<td>{{ i.name }}</td>
+											<td class="d-none d-xl-table-cell">{{ i.title }}</td>
+											<td class="d-none d-md-table-cell">{{ i.description }}</td>
+											<td>
+												{% if i.status %}
+												<span class="badge bg-success">Accepted</span>
+												{% else %}
+												<span class="badge bg-danger">Pending</span>
+												{% endif %}
+											</td>
+										</tr>
+										{% endfor %}
+										{% endif %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+						
+					</div>
+
+				</div>
+			</main>
+<script>
+	
+</script>
+{% endblock %}
